@@ -112,4 +112,4 @@ with st.container():
         # Some code
         binary_contents = b"example content"
         if right.download_button('Разбудить деда', binary_contents, use_container_width=True): # on_click=set_stage, args=(1,)
-            right.markdown("Пиздец")
+            right.markdown("Пиздец") # 
