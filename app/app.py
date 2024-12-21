@@ -17,6 +17,17 @@ def check_and_load_csv(file):
             return None
     return None
 
+def set_stage(stage):
+    st.session_state.stage = stage
+
+
+def download_file():
+    letters_randoms = {
+    'A': [1, 5],
+    'B': [2, 6],
+    'C': [3, 7],
+}
+    pd.DataFrame(letters_randoms).to_csv("result.csv")
 
 # Theme Configuration
 st.set_page_config(page_title="CSV File Loader", layout="wide", page_icon="📊")
@@ -35,7 +46,7 @@ button {
 )
 
 # Main Header
-st.header("📈 Data Management Dashboard")
+st.header("📈 Реализация")
 
 # Sidebar Content
 # with st.sidebar:
@@ -52,7 +63,7 @@ st.header("📈 Data Management Dashboard")
 with st.container():
     with st.expander("Показать инструкцию"):
         st.write('''
-        Охапка дров и плов готов
+        Охапка дров и **плов** готов
         ''')
         st.image("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSaqmkIlh_VDaMu8lr10CBb_Q9EyKoOT89EJA&s")
 
@@ -65,7 +76,7 @@ with st.container():
 
     with col1:
         st.subheader("💱 Exchange Rates")
-        ex_file = st.file_uploader("Загрузите Exchange Rates CSV", key="ex_rates", type=['csv'])
+        ex_file = st.file_uploader("Загрузите обменные курсы", key="ex_rates", type=['csv'])
         if ex_file:
             with st.spinner("Идет загрузка..."):
                 exchange_rates = check_and_load_csv(ex_file)
@@ -73,8 +84,8 @@ with st.container():
                     st.dataframe(exchange_rates.head().style.format(), use_container_width=True)
 
     with col2:
-        st.subheader("💸 Payments")
-        payments_file = st.file_uploader("Загрузите Payments CSV", key="payments", type=['csv'])
+        st.subheader("💸 Платежи")
+        payments_file = st.file_uploader("Загрузите платежи", key="payments", type=['csv'])
         if payments_file:
             with st.spinner("Идет загрузка..."):
                 payments = check_and_load_csv(payments_file)
@@ -82,14 +93,23 @@ with st.container():
                     st.dataframe(payments.head().style.format(), use_container_width=True)
 
     with col3:
-        st.subheader("🏢 Providers")
-        providers_file = st.file_uploader("Загрузите Providers CSV", key="providers", type=['csv'])
+        st.subheader("🏢 Провайдеры")
+        providers_file = st.file_uploader("Загрузите провайдеров", key="providers", type=['csv'])
         if providers_file:
             with st.spinner("Идет загрузка..."):
                 providers = check_and_load_csv(providers_file)
                 if providers is not None:
                     st.dataframe(providers.head().style.format(), use_container_width=True)
 
-    _, middle, _ = st.columns(3)
-    if middle.button("Выполнить стратегию!", icon="😃", use_container_width=True):
-        middle.markdown("You clicked the emoji button.")
+    if 'stage' not in st.session_state:
+        st.session_state.stage = 0
+
+    _, middle, right = st.columns(3)
+    if middle.button("**Выполнить стратегию!**", icon="😃", use_container_width=True, on_click=set_stage, args=(1,)):
+        middle.markdown("Вы нажали на кнопку!")
+
+    if st.session_state.stage > 0:
+        # Some code
+        binary_contents = b"example content"
+        if right.download_button('Разбудить деда', binary_contents, use_container_width=True): # on_click=set_stage, args=(1,)
+            right.markdown("Пиздец")
