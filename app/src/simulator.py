@@ -21,18 +21,33 @@ class Simulator:
         self.payments = payments
         self.providers = providers
         self.currencies = currencies
+        self.strategy = strategy
 
         self._payments_for_output = self.payments.copy()
 
         self._initialize_dataframes()
 
-        self.strategy = strategy
+        self.providers_constants = {
+            row["ID"]: {
+                "limit_min": row["LIMIT_MIN"],
+                "limit_max": row["LIMIT_MAX"],
+                "currency": row["CURRENCY"],
+            }
+
+            for _, row in providers[providers["TIME"] == providers.iloc[0]["TIME"]].iterrows()
+        }
 
     def simulate(self, verbose: bool = True):        
         history = []
 
         for _, payment in tqdm(self.payments.iterrows(), total=len(self.payments), disable=not verbose):
-            payment = Payment(*payment)
+            payment = Payment(
+                time=payment["eventTimeRes"],
+                amount=payment["amount"],
+                currency=payment["cur"],
+                payment=payment["payment"],
+                token=payment["cardToken"]
+            )
 
             available_providers = self._get_available_providers(payment)
             
@@ -69,6 +84,32 @@ class Simulator:
         self._payments_for_output["flow"] = flows
 
         return self._payments_for_output
+    
+    def _compute_metrics(self, history):
+        penalty = 0
+        processing_times = []
+        
+        for log in history:
+            if len(log["solution"]) > 0:
+                payment = log["payment"]
+
+                expected_commision = compute_expected_commission(log["solution"])
+                expected_processing_time = compute_expected_processing_time(log["solution"])
+
+                processing_times.append(expected_processing_time)
+
+                penalty += (expected_commision / 100) * self.currencies[payment.currency] * payment.amount
+
+        return {
+            "penalty": penalty.item(),
+            "processing_time": {
+                "mean": np.mean(processing_times).item(),
+                "median": np.median(processing_times).item(),
+                "first_quantile": np.quantile(processing_times, q=0.25).item(),
+                "third_quantile": np.quantile(processing_times, q=0.75).item(),
+            }
+        }
+            
 
     def _get_available_providers(self, payment: Payment) -> List[Provider]:
         available_providers = self.providers[
