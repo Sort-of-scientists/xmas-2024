@@ -1,0 +1,5 @@
+outs:
+- md5: 5a486be94150a46ba268578c9b283e39
+  size: 310
+  hash: md5
+  path: ex_rates.csv

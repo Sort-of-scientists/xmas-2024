@@ -1,0 +1,5 @@
+outs:
+- md5: 111ae43280c78c8f275fa4731926bd80
+  size: 38647
+  hash: md5
+  path: providers_1.csv

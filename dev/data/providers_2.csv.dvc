@@ -1,0 +1,5 @@
+outs:
+- md5: 97d890cc4a26b82fe9b6393607881e01
+  size: 32186
+  hash: md5
+  path: providers_2.csv
