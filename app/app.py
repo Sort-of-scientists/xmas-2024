@@ -1,21 +1,4 @@
-import streamlit as st
 import pandas as pd
-import os
-
-def check_and_load_csv(file):
-    """Check if the uploaded file is a CSV and load it."""
-    if file is not None:
-        _, ext = os.path.splitext(file.name)
-        if ext.lower() == '.csv':
-            try:
-                return pd.read_csv(file)
-            except Exception as e:
-                st.error(f"Ошибка при загрузке CSV файла: {e}")
-                return None
-        else:
-            st.error("Только CSV файлы разрешены!")
-            return None
-    return None
 
 def set_stage(stage):
     st.session_state.stage = stage
@@ -29,49 +12,15 @@ def download_file():
 }
     pd.DataFrame(letters_randoms).to_csv("result.csv")
 
-# Theme Configuration
-st.set_page_config(page_title="CSV File Loader", layout="wide", page_icon="📊")
-
-st.markdown(
-    """
-<style>
-button {
-    height: auto;
-    padding-top: 15px !important;
-    padding-bottom: 10px !important;
-}
-</style>
-""",
-    unsafe_allow_html=True,
-)
-
 # Main Header
 st.header("📈 Реализация")
-
-# Sidebar Content
-# with st.sidebar:
-#     st.subheader("🔧 Выбор стратегии:")
-#     strategy = st.selectbox("Выберите стратегию:", ["Время", "Прибыль"])
-#     st.markdown(f"Выбранная стратегия: **{strategy.split('(')[0].strip()}**")
-#     st.info("Пожалуйста загрузите необходимые **.csv** файлы, а также выберите **стратегию**")
-
-
-# Create three columns for file uploaders
-# col0, col1, col2, col3 = st.rows(4)
-
-
 with st.container():
     with st.expander("Показать инструкцию"):
         st.write('''
         Охапка дров и **плов** готов
         ''')
         st.image("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSaqmkIlh_VDaMu8lr10CBb_Q9EyKoOT89EJA&s")
-
-    st.subheader("🔧 Выбор стратегии:")
-    strategy = st.selectbox("Выберите стратегию:", ["Время", "Прибыль"], key='strategy')
-    st.markdown(f"Выбранная стратегия: **{strategy.split('(')[0].strip()}**")
-    st.info("Пожалуйста загрузите необходимые **.csv** файлы, а также выберите **стратегию**")
-
+        
     col1, col2, col3 = st.columns(3)
 
     with col1:
