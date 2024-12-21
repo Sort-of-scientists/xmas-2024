@@ -53,12 +53,11 @@ class Simulator:
 
     def _get_available_providers(self, payment: Payment) -> List[Provider]:
         available_providers = self.providers[
-            (payment.time >= self.providers.TIME) &
-            (payment.time <= (self.providers.TIME + timedelta(hours=1))) &
-            (payment.amount >= self.providers.MIN_SUM) &
+            (payment.time <= self.providers.TIME) &
             (payment.currency == self.providers.CURRENCY) &
+            (payment.amount >= self.providers.MIN_SUM) &
             (payment.amount <= self.providers.MAX_SUM)
-        ].drop_duplicates("ID")
+            ].drop_duplicates(subset=["ID"], keep="last")
 
         if len(available_providers) > 0:
             assert len(available_providers) == available_providers.ID.nunique()
