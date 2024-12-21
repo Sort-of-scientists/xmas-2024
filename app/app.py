@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import os
 
+
 def check_and_load_csv(file):
     """Check if the uploaded file is a CSV and load it."""
     if file is not None:
