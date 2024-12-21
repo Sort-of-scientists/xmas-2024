@@ -1,4 +1,22 @@
+import streamlit as st
 import pandas as pd
+import os
+
+
+def check_and_load_csv(file):
+    """Check if the uploaded file is a CSV and load it."""
+    if file is not None:
+        _, ext = os.path.splitext(file.name)
+        if ext.lower() == '.csv':
+            try:
+                return pd.read_csv(file)
+            except Exception as e:
+                st.error(f"Ошибка при загрузке CSV файла: {e}")
+                return None
+        else:
+            st.error("Только CSV файлы разрешены!")
+            return None
+    return None
 
 def set_stage(stage):
     st.session_state.stage = stage
@@ -20,7 +38,7 @@ with st.container():
         Охапка дров и **плов** готов
         ''')
         st.image("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSaqmkIlh_VDaMu8lr10CBb_Q9EyKoOT89EJA&s")
-        
+
     col1, col2, col3 = st.columns(3)
 
     with col1:
