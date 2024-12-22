@@ -52,6 +52,9 @@ with st.container():
         st.markdown("""
         1. Выберите стратегию минимизации
         2. Загрузите `.csv` файлы в соответсвующие разделы.
+
+           Внимание! Файлы `payments.csv` и `providers.csv` должны соответствовать одному и тому же дню.            
+        
         3. Нажмите кнопку **Выполнить стратегию!**
         4. Скачайте результаты
     """)
@@ -100,10 +103,10 @@ with st.container():
             history = simulator.simulate(verbose=True)        
 
         outputs = simulator._get_output_dataframe(history)
-        metrics = simulator._compute_metrics(history)
+        #metrics = simulator._compute_metrics(history)
         
-        st.markdown(f"😡 Издержки составили: **{metrics['penalty']:.2f}$**")
-        st.markdown(f"😎 95% пользователей ожидают подтверждения оплаты меньше, чем **{metrics['processing_time']['mean']:.2f} миллисекунд!**")
-        st.markdown(f"😤 Конверсия составила **{metrics['conversion']:.2f}%**")
+        #st.markdown(f"😡 Издержки составили: **{metrics['penalty']:.2f}$**")
+        #st.markdown(f"😎 95% пользователей ожидают подтверждения оплаты меньше, чем **{metrics['processing_time']['mean']:.2f} миллисекунд!**")
+        #st.markdown(f"😤 Конверсия составила **{metrics['conversion']:.2f}%**")
 
         st.download_button('Скачать результат', outputs.to_csv().encode("utf-8"), "result.csv", "text/csv", use_container_width=True)
