@@ -1,3 +1,4 @@
+import streamlit as st
 import pandas as pd
 
 from .strategies import BaseStrategy, GreedyStrategy
@@ -41,6 +42,7 @@ class Simulator:
         history = []
 
         for _, payment in tqdm(self.payments.iterrows(), total=len(self.payments), disable=not verbose):
+
             payment = Payment(
                 time=payment["eventTimeRes"],
                 amount=payment["amount"],
@@ -87,6 +89,8 @@ class Simulator:
     
     def _compute_metrics(self, history):
         penalty = 0
+
+        conversions = []
         processing_times = []
         
         for log in history:
@@ -94,9 +98,11 @@ class Simulator:
                 payment = log["payment"]
 
                 expected_commision = compute_expected_commission(log["solution"])
+                expected_conversion = compute_expected_conversion(log["solution"])
                 expected_processing_time = compute_expected_processing_time(log["solution"])
 
                 processing_times.append(expected_processing_time)
+                conversions.append(expected_conversion)
 
                 penalty += (expected_commision / 100) * self.currencies[payment.currency] * payment.amount
 
@@ -104,10 +110,9 @@ class Simulator:
             "penalty": penalty.item(),
             "processing_time": {
                 "mean": np.mean(processing_times).item(),
-                "median": np.median(processing_times).item(),
-                "first_quantile": np.quantile(processing_times, q=0.25).item(),
-                "third_quantile": np.quantile(processing_times, q=0.75).item(),
-            }
+                "quantile_95": np.quantile(processing_times, q=0.95).item()
+            },
+            "conversion": np.mean(conversions).item()
         }
             
 
